@@ -16,7 +16,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
    allow_origins=[
-  "https://task-frontend-six-lac.vercel.app/tasks"
+    "http://localhost:5173",
+    "https://task-frontend-six-lac.vercel.app"
 ],
     allow_credentials=True,
     allow_methods=["*"],
