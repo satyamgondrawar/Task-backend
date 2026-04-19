@@ -151,6 +151,9 @@ def generate_fallback_reply(message: str) -> str:
         "a task breakdown, or a short productivity strategy."
     )
 
+@app.get("/")
+def root():
+    return {"status": "running"}
 
 @app.get("/tasks")
 def get_tasks():
