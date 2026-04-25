@@ -30,6 +30,7 @@ if gemini_api_key:
 
 tasks = []
 plans = []
+reminders = []
 
 
 class Task(BaseModel):
@@ -46,6 +47,15 @@ class Plan(BaseModel):
     completed: bool
     priority: str
     createdAt: str
+
+
+class Reminder(BaseModel):
+    id: int
+    title: str
+    notes: Optional[str] = None
+    completed: bool
+    createdAt: str
+    dueAt: str
 
 
 class ChatRequest(BaseModel):
@@ -209,6 +219,33 @@ def delete_plan(plan_id: int):
     return {"message": "Deleted"}
 
 
+@app.get("/reminders")
+def get_reminders():
+    return reminders
+
+
+@app.post("/reminders")
+def add_reminder(reminder: Reminder):
+    reminders.append(reminder)
+    return reminder
+
+
+@app.put("/reminders/{reminder_id}")
+def update_reminder(reminder_id: int, updated: Reminder):
+    for index, reminder in enumerate(reminders):
+        if reminder.id == reminder_id:
+            reminders[index] = updated
+            return updated
+    return {"error": "Reminder not found"}
+
+
+@app.delete("/reminders/{reminder_id}")
+def delete_reminder(reminder_id: int):
+    global reminders
+    reminders = [reminder for reminder in reminders if reminder.id != reminder_id]
+    return {"message": "Deleted"}
+
+
 @app.post("/chat")
 async def chat(data: ChatRequest):
     prompt = data.message.strip()
@@ -242,4 +279,3 @@ async def plan_tasks(data: PlannerRequest):
         "days": plan,
         "summary": f"I created a {len(plan)} day plan with {total_tasks} tasks.",
     }
-
